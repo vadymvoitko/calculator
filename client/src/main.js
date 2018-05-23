@@ -4,13 +4,14 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import jQuery from 'jquery'
-
+import VueTimers from 'vue-timers'
 import 'bootstrap/dist/css/bootstrap.css'
 // import values in vars with created names like start ets
 import start from '../components/start.vue'
 import message from '../components/message.vue'
 import success from '../components/success.vue'
 import finish from '../components/finish.vue'
+Vue.use(VueTimers)
 global.jQuery = jQuery
 let Bootstrap = require('bootstrap')
 //  register them

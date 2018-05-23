@@ -5,7 +5,6 @@
         <button class="btn btn-primary" @click="$emit('next')">
             continue
         </button>  
-    <div class="container">3</div>
   </div>
 </template>
 

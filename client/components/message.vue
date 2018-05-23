@@ -1,6 +1,7 @@
 <template>
-    <div class="container">
+    <div class="alert">
         <h1>{{x}} + {{y}} = ?</h1>
+        <div class="float-right alert-warning">{{ sec }}:{{ mSec }}</div>
         <hr>
         <button v-for="number in answers" 
                 @click="onAnswer(number)"
@@ -15,9 +16,13 @@
   data(){
     return {
         x: GetNumber(100,200),
-        y: GetNumber(100,200)
-        
+        y: GetNumber(100,200),
+        sec: '3',
+        mSec: '0'
     }
+  },
+  timers: {
+      seconds: { time: 1000, autostart: true, repeat: true }
   },
   methods: {
     onAnswer(num){
@@ -29,7 +34,14 @@
             this.$emit('error',`${this.x} + ${this.y} = ${this.good}`);
             
         }
-    }
+    },
+      seconds () {
+        this.sec --;
+        if (this.sec == 0){
+            this.$timer.stop('seconds');
+            this.$emit('error',`Time is expired`);
+        }
+      }
   },
   computed: {
     good () {
@@ -48,6 +60,7 @@
       }
   }
 }
+    
 function GetNumber(min, max){
     return Math.floor((Math.random()*(max - min) + min))
 }

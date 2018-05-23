@@ -8,27 +8,36 @@
           <span class="sr-only">70% Complete</span>
           </div>
         </div>
+        <br>
 <!--listen to an action StartEmit and start changeState on it-->
-    <start @StartEmit="changeState('message')" 
-           v-if="state == 'start'"
-    ></start>
-    <message v-else-if="state=='message'"
-             @success="onQuestSuccess"
-             @error="onQuestError"
-             ></message>
-    <!-- we decl type and text in parent to throw to props of child in success.vue -->
-    <!-- parent is component here, child is file .vue with template/script/style -->
-    <success v-else-if="state=='success'"
-            :type="message.type"
-            :text="message.text"
-            @next="onNext()"
-    ></success>
-    <finish v-else-if="state=='finish'"
-            :success="this.stats.success"
-            :numberQuest="this.questDone"
-            @startNew="startNew()"
-    ></finish>
-    <div v-else>not defined</div>
+<!--IMPORTANT !!! mode="in-out" FOR NON-SIMULTANIOUS ANIMATION-->
+   <transition name = "rotate" mode="out-in">
+        <start @StartEmit="changeState('message')"
+               v-if="state == 'start'"
+        ></start>
+
+                    <message 
+                         v-else-if="state=='message'"
+                         @success="onQuestSuccess"
+                         @error="onQuestError"
+                         class="alert-info"
+                         />
+        <!-- we decl type and text in parent to throw to props of child in success.vue -->
+        <!-- parent is component here, child is file .vue with template/script/style -->
+        <success v-else-if="state=='success'"
+                :type="message.type"
+                :text="message.text"
+                :class="message.type"
+                @next="onNext()"
+        ></success>
+        <finish v-else-if="state=='finish'"
+                :success="this.stats.success"
+                :numberQuest="this.questDone"
+                :class="message.resultType"
+                @startNew="startNew()"
+        ></finish>
+        <div v-else>not defined</div>
+    </transition>
   </div>
 
 </template>
@@ -44,7 +53,8 @@ export default {
       'state': 'start',
       message: {
         type: '',
-        text: ''
+        text: '',
+        resultType: 'alert-success'
       },
       stats: {
         success: 0,
@@ -53,7 +63,7 @@ export default {
       numberQuest: 3
     }
   },
-//computed is initiated when any var is changed
+  // computed is initiated when any var is changed
   computed: {
     questDone () {
       return this.stats.error + this.stats.success
@@ -69,14 +79,15 @@ export default {
     onQuestSuccess () {
       this.state = 'success'
       this.message.text = 'Good Job'
-      this.message.type = 'success'
+      this.message.type = 'alert-success'
       this.stats.success++
     },
     onQuestError (msg) {
       this.state = 'success'
       this.message.text = msg
-      this.message.type = 'warning'
+      this.message.type = 'alert-warning'
       this.stats.error++
+      this.message.resultType = 'alert-warning'
     },
     onNext () {
       if (this.questDone === this.numberQuest) {
@@ -88,6 +99,7 @@ export default {
     startNew () {
       this.state = 'message'
       this.stats.error = this.stats.success = 0
+      this.message.resultType = 'alert-success'
     }
   }
 }
@@ -102,4 +114,21 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+    .rotate-enter-active{
+       animation: rotateInX 0.3s linear;
+    }
+    .rotate-leave-active{
+        animation: rotateOutX 0.3s linear;
+    }
+    .rotate-enter, .rotate-leave-to {
+   
+}
+    @keyframes rotateInX{
+        from{transform: rotateX(90deg);}
+        to{transform: rotateX(0deg);}
+    }
+    @keyframes rotateOutX{
+        from{transform: rotateX(0deg);}
+        to{transform: rotateX(90deg);}
+    }
 </style>
