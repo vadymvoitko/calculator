@@ -38,6 +38,7 @@
         ></finish>
         <div v-else>not defined</div>
     </transition>
+    <router-view/>
   </div>
 
 </template>
